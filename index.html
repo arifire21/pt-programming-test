@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PT Programming Test</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body> 
+    <div id="hud">
+      <p id="timer">1:00</p>
+      <p>Targets shot: <span id="score">0</span></p>
+      <p>Total targets spawned: <span id="spawn">0</span></p>
+    </div>
+
+    <div id="play">
+      <button class="btn" id="play-btn">&#9658;</button>
+      <!-- <button class="btn" id="stop-btn">&#9632;</button> -->
+      <button class="btn" id="replay-btn" style="display: none;">&#5125A;</button>
+    </div>
+
+    <div id="stats" style="display: none;">
+      <p>Shots Taken: <span id="shots">0</span></p>
+      <p>Targets shot: <span id="score2">0</span></p>
+      <p>% of Hits: <span id="percent-hits">0</span></p>
+      <p>% of Misses: <span id="percent-misses">0</span></p>
+    </div>
+
+    <div id="stage"></div>
+  </body>
+
+  <script type="text/javascript" src="demo.js"></script>
+</html>
