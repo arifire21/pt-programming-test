@@ -1,24 +1,60 @@
-#stage{
-    background-color: gray;
-    width: 640px;
-    height: 480px;
+p {
+    font-family:'Courier New', Courier, monospace;
+}
+
+#buttons {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 1.5rem;
 }
 
-#btn {
-    width: 50px;
-    height: 50px;
-    padding: 0.5rem;
+#stage{
+    display: none;
+    background-color: gray;
+    width: 100%;
+    height: 75%;
+    /* display: flex;
+    flex-wrap: wrap; */
+    position: relative;
 }
 
-#hud, #play-stats {
-    margin-bottom: 1rem;
+.btn {
+    background-color: orange;
+    color: white;
+    border: none;
+    width: 3.125rem;
+    height: 3.125rem;
+    border-radius: 15px;
+    font-size: 16pt;
+    text-align: center;
 }
 
-#timer, #target-text, #shots, #score2, #percent-hits, #percent-misses {
+.btn:hover, .btn:active{
+    background-color: darkorange;
+    color: lightgray;
+}
+
+#hud, #stats, #timer {
+    z-index: 5;
+    margin-bottom: 1rem !important;
+}
+
+/* all p elements in divs */
+#hud p, #stats p {
     margin: 0;
     text-align: center;
+    font-size: 16pt;
+}
+
+#timer {
+    text-align: center;
+    font-weight: bold;
+    font-size: 20pt !important;
+}
+
+#stats {
+    justify-content: center;
+    flex-direction: column;
 }
 
 .target {
@@ -26,12 +62,8 @@
     height: 30px;
     border-radius: 50%;
     color: white;
-    border: 1px solid red;
+    border: 2px solid red;
     cursor: pointer;
     background-color: white;
-}
-
-#stats {
-    justify-content: center;
-    flex-direction: column;
+    position: absolute;
 }
