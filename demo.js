@@ -65,8 +65,8 @@ function startGame(){
     //reset event listener
     spawnerID = window.setInterval(() => {
         spawnTarget();
-        console.log("Delayed for 1/2 second.");
-    }, 500);  
+        console.log("Delayed for 1 second.");
+    }, 1000);  
 }
 
 function endGame(){
