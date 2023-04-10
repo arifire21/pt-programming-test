@@ -8,13 +8,11 @@ const spawnText = document.getElementById("spawn");
 
 const statsDiv = document.getElementById("stats");
 const hudDiv = document.getElementById("hud");
+const timerText = document.getElementById("timer");
 const shotsText = document.getElementById("shots");
 const scoreTextFinal = document.getElementById("score2");
 const percentHitsText = document.getElementById("percent-hits");
 const percentMissesText = document.getElementById("percent-misses");
-
-var winWidth = window.innerWidth;
-var winHeight = window.innerHeight;
 
 //bind on load
 startBtn.addEventListener("click", startGame); 
@@ -24,27 +22,33 @@ replayBtn.addEventListener("click", function() {
 }); 
 
 //variablesssss
+var widthBoundary = 640;
+var heightBoundary = 480;
 let spawnerID;
 let clickCountID;
 let spawnedAmnt = 0;
 let timesClicked = 0;
 let score = 0;
+let spawnedOnStart = false;
 
 function initTimer(){
     var sec = 59;    //set lower for test
     var timer = setInterval(function(){
-        document.getElementById("timer").innerText='00:'+sec;
+        timerText.innerText='00:'+sec;
         sec--;
-        if (sec < 0) {
-            endGame()
+        if(sec < 11){
+            timerText.style.color = "red";
+        }
+        if (sec == -1) {
             clearInterval(timer);
+            endGame();
         }
     }, 1000);
 }
 
 function startGame(){
-    startBtn.remove()
-    stage.style.display = "block";
+    startBtn.remove();
+    stage.style.display= "block";
 
     //for amnt of shots
     //bind here so clicking the btn doesnt count as one
@@ -56,38 +60,31 @@ function startGame(){
     }, 500);
 
     initTimer();
-    spawnTargets();
+    spawnTargetsOnStart();
 
-    // spawnerID = window.setInterval(() => {
-    //     addTarget();
-    //     console.log("Delayed for 1/2 second.");
-    // }, 500);  
+    //reset event listener
+    spawnerID = window.setInterval(() => {
+        spawnTarget();
+        console.log("Delayed for 1/2 second.");
+    }, 500);  
 }
 
 function endGame(){
     stopSpawn();
     stopClickCount();
-    
-    // let targetsOnScreen = document.getElementsByClassName("target");
-    // for (let i = 0; i <= targetsOnScreen.length; i++) {
-    //     targetsOnScreen[i].remove();
-    //     spawnedAmnt--;
-    // }
-    // console.log(spawnedAmnt);
 
     stage.remove();
     hudDiv.style.display = "none";
+    document.getElementById("instructions").style.display = "none";
 
     let percentHits = ((score / timesClicked) * 100).toFixed(2);
     let percentMisses = (((timesClicked - score) / timesClicked) * 100).toFixed(2);
     console.log(score + " / " + timesClicked + " = " + percentHits + "\n" + timesClicked + " - " + score + " / " +  timesClicked + " = " + percentMisses);
 
-    if(percentHits === NaN){
+    //so that NaN isnt shown
+    if(score == 0){
         console.log("reach")
         percentHits = 0;
-    }
-    if (percentMisses === NaN) {
-        console.log("reach")
         percentMisses = 0;
     }
 
@@ -107,42 +104,97 @@ function shootHandler(element){
     // console.log(score)
 }
 
-function spawnTargets() {    
-    for (let i = 0; i < 5000; i++) {
+function spawnTargetsOnStart() {
+    for (let i = 0; i < 100; i++) {
         const target = document.createElement("div");
         target.classList.add("target");
         target.addEventListener("click", function() {
             shootHandler(target);
         });
 
-        
+        //set random spawn y coord to push target down
+        let randomY = Math.ceil((Math.random() * heightBoundary));
+        target.style.top = randomY + "px";
 
+        //add the elem to the stage
         stage.append(target);
         spawnedAmnt++;
         spawnText.innerText = spawnedAmnt;
+
+        //pick a random animation
+        getRandomAnim(target)
     }
 }
 
-// function addTarget() {
-//     const stage = document.getElementById("stage");
-    
-//     const target = document.createElement("div");
-//     target.classList.add("target");
-//     target.addEventListener("click", function() {
-//         shootHandler(target);
-//     }); 
+function spawnTarget() {
+    const target = document.createElement("div");
+    target.classList.add("target");
+    target.addEventListener("click", function() {
+        shootHandler(target);
+    });
 
-//     stage.append(target);
-//     spawnedAmnt++;
-//     spawnText.innerText = spawnedAmnt;
-// }
+    //set random spawn y coord to push target down
+    let randomY = Math.ceil((Math.random() * heightBoundary));
+    //set spawn for each target
+    target.style.top = randomY + "px";
+
+    //add the elem to the stage
+    stage.append(target);
+    spawnedAmnt++;
+    spawnText.innerText = spawnedAmnt;
+
+    //pick a random animation
+    getRandomAnim(target)
+}
+
+function getRandomAnim(currentTarget){
+    //get random vals to use
+    let randomChoice = Math.floor(Math.random() * 2);
+    let randomDelay = (Math.random() * 1500);
+    // let randomDuration = (Math.random() * 14000);
+    let randomDuration = (Math.random()* ((12000 - 4000) + 1) + 4000);
+    let animChoice;
+
+    switch (randomChoice) {
+        case 0:     //left
+            animChoice = currentTarget.animate(
+                [
+                    { transform: "translateX(" + widthBoundary + "px)" }, 
+                    { transform: "translateX(0%)" },
+                ], {
+                    easing: 'ease-in',
+                    duration: randomDuration,
+                    direction: 'alternate',
+                    iterations: Infinity,
+                    delay: randomDelay
+                }
+            );
+            break;
+        case 1:     //right
+            animChoice = currentTarget.animate(
+                [
+                    { transform: "translateX(0px)" }, 
+                    { transform: "translateX(" + widthBoundary + "px)" }, 
+                ], {
+                    easing: 'ease-in',
+                    duration: randomDuration,
+                    direction: 'alternate',
+                    iterations: Infinity,
+                    delay: randomDelay
+                }
+            );
+            break;
+    }
+
+    animChoice.play();
+}
 
 function stopSpawn(){
-    clearInterval(spawnerID)   //run this first
-    console.log("spawner stopped")
+    clearInterval(spawnerID);
+    console.log("spawner stopped");
 }
 
 function stopClickCount(){
-    clearInterval(clickCountID)
-    console.log("click-count stopped")
+    clearInterval(clickCountID);
+    console.log("click-count stopped");
 }
